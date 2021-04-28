@@ -10,8 +10,8 @@ const {
   createBrand,
   getBrandBySlug,
 
-  getProductDetailsById,
-  deleteProductById,
+  getBrandDetailsById,
+  deleteBrandById,
 
   getProducts,
 } = require("../controller/brand");
@@ -41,12 +41,12 @@ router.post(
 );
 router.get("/brands/:slug", getBrandBySlug);
 //router.get('/category/getcategory', getCategories);
-router.get("/brand/:brandId", getProductDetailsById);
+router.get("/brand/:brandId", getBrandDetailsById);
 router.delete(
   "/brand/deleteBrandById",
   requireSignin,
   adminMiddleware,
-  deleteProductById
+  deleteBrandById
 );
 router.post("/brand/getBrands", requireSignin, adminMiddleware, getProducts);
 

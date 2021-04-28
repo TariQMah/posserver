@@ -62,14 +62,8 @@ exports.getBrandDetailsById = (req, res) => {
 
 // new update
 exports.deleteBrandById = (req, res) => {
-  console.log(
-    "%cMyProject%cline:63%creq",
-    "color:#fff;background:#ee6f57;padding:3px;border-radius:2px",
-    "color:#fff;background:#1f3c88;padding:3px;border-radius:2px",
-    "color:#fff;background:rgb(89, 61, 67);padding:3px;border-radius:2px",
-    req
-  );
   const { brandId } = req.body.payload;
+
   if (brandId) {
     Brand.deleteOne({ _id: brandId }).exec((error, result) => {
       if (error) return res.status(400).json({ error });

@@ -32,10 +32,24 @@ exports.createBrand = (req, res) => {
 };
 exports.getBrandBySlug = (req, res) => {
   const { slug } = req.params;
-  console.log(slug);
-
   if (slug) {
-    Brand.find({ slug: slug }).exec((error, brand) => {
+    Brand.find({ slug: { $regex: ".*" + slug + ".*" } }).exec(
+      (error, brand) => {
+        if (error) return res.status(400).json({ error });
+        if (brand) {
+          res.status(200).json({ brand });
+        }
+      }
+    );
+  } else {
+    return res.status(400).json({ error: "Params required" });
+  }
+};
+
+exports.getBrandDetailsById = (req, res) => {
+  const { brandId } = req.params;
+  if (brandId) {
+    Brand.findOne({ _id: brandId }).exec((error, brand) => {
       if (error) return res.status(400).json({ error });
       if (brand) {
         res.status(200).json({ brand });
@@ -46,25 +60,18 @@ exports.getBrandBySlug = (req, res) => {
   }
 };
 
-exports.getProductDetailsById = (req, res) => {
-  const { productId } = req.params;
-  if (productId) {
-    Product.findOne({ _id: productId }).exec((error, product) => {
-      if (error) return res.status(400).json({ error });
-      if (product) {
-        res.status(200).json({ product });
-      }
-    });
-  } else {
-    return res.status(400).json({ error: "Params required" });
-  }
-};
-
 // new update
-exports.deleteProductById = (req, res) => {
-  const { productId } = req.body.payload;
-  if (productId) {
-    Product.deleteOne({ _id: productId }).exec((error, result) => {
+exports.deleteBrandById = (req, res) => {
+  console.log(
+    "%cMyProject%cline:63%creq",
+    "color:#fff;background:#ee6f57;padding:3px;border-radius:2px",
+    "color:#fff;background:#1f3c88;padding:3px;border-radius:2px",
+    "color:#fff;background:rgb(89, 61, 67);padding:3px;border-radius:2px",
+    req
+  );
+  const { brandId } = req.body.payload;
+  if (brandId) {
+    Brand.deleteOne({ _id: brandId }).exec((error, result) => {
       if (error) return res.status(400).json({ error });
       if (result) {
         res.status(202).json({ result });
@@ -76,7 +83,7 @@ exports.deleteProductById = (req, res) => {
 };
 
 exports.getProducts = async (req, res) => {
-  const products = await Product.find({ createdBy: req.user._id })
+  const products = await Brand.find({ createdBy: req.user._id })
     .select("_id name price quantity slug description productPictures category")
     .populate({ path: "category", select: "_id name" })
     .exec();

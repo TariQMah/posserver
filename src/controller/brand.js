@@ -1,21 +1,20 @@
 const Brand = require("../models/brand");
-const shortid = require("shortid");
+
 const slugify = require("slugify");
-const Category = require("../models/category");
 
 exports.createBrand = (req, res) => {
+  console.log(
+    "%cMyProject%cline:5%creq",
+    "color:#fff;background:#ee6f57;padding:3px;border-radius:2px",
+    "color:#fff;background:#1f3c88;padding:3px;border-radius:2px",
+    "color:#fff;background:rgb(178, 190, 126);padding:3px;border-radius:2px",
+    req
+  );
   //res.status(200).json( { file: req.files, body: req.body } );
 
-  const { name, description, createdBy } = req.body;
-  // let productPictures = [];
+  const { name, description } = req.body;
 
-  // if (req.files.length > 0) {
-  //   productPictures = req.files.map((file) => {
-  //     return { img: file.location };
-  //   });
-  // }
-
-  const Brands = new Brand({
+  const brands = new Brand({
     name: name,
     slug: slugify(name),
     description,
@@ -23,7 +22,7 @@ exports.createBrand = (req, res) => {
     createdBy: req.user._id,
   });
 
-  Brands.save((error, brand) => {
+  brands.save((error, brand) => {
     if (error) return res.status(400).json({ error });
     if (brand) {
       res.status(201).json({ brand, files: req.files });
@@ -76,11 +75,10 @@ exports.deleteBrandById = (req, res) => {
   }
 };
 
-exports.getProducts = async (req, res) => {
-  const products = await Brand.find({ createdBy: req.user._id })
-    .select("_id name price quantity slug description productPictures category")
-    .populate({ path: "category", select: "_id name" })
+exports.getBrands = async (req, res) => {
+  const brands = await Brand.find({ createdBy: req.user._id })
+    .select("_id name slug description")
     .exec();
 
-  res.status(200).json({ products });
+  res.status(200).json({ brands });
 };

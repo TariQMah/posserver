@@ -13,34 +13,16 @@ const {
   getBrandDetailsById,
   deleteBrandById,
 
-  getProducts,
+  getBrands,
 } = require("../controller/brand");
-const multer = require("multer");
+
 const router = express.Router();
 const shortid = require("shortid");
 const path = require("path");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(path.dirname(__dirname), "uploads"));
-  },
-  filename: function (req, file, cb) {
-    cb(null, shortid.generate() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({ storage });
-
-router.post(
-  "/brand/create",
-  requireSignin,
-  adminMiddleware,
-
-  // uploadS3.array("productPicture"),
-  createBrand
-);
+router.post("/brand/create", requireSignin, adminMiddleware, createBrand);
 router.get("/brands/:slug", getBrandBySlug);
-//router.get('/category/getcategory', getCategories);
+
 router.get("/brand/:brandId", getBrandDetailsById);
 router.delete(
   "/brand/deleteBrandById",
@@ -48,6 +30,6 @@ router.delete(
   adminMiddleware,
   deleteBrandById
 );
-router.post("/brand/getBrands", requireSignin, adminMiddleware, getProducts);
+router.post("/brand/getBrands", requireSignin, adminMiddleware, getBrands);
 
 module.exports = router;
